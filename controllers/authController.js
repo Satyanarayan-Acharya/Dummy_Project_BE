@@ -6,6 +6,7 @@ const nodemailer = require("nodemailer");
 const { v4: uuidv4 } = require("uuid");
 const resetTokens = {};
 const dotenv = require("dotenv");
+const axios = require("axios");
 dotenv.config();
 
 exports.register = async (req, res) => {
@@ -24,9 +25,9 @@ exports.register = async (req, res) => {
       return res.status(400).json({ message: "Invalid email address" });
     }
 
-    const user=await User.findOne({ email });
+    const user = await User.findOne({ email });
 
-    if(user){
+    if (user) {
       res.status(500).json({ message: "Already have Account" });
     }
 
@@ -69,7 +70,7 @@ exports.login = async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    res.json({ token:token , userData:user });
+    res.json({ token: token, userData: user });
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ message: "Login failed" });
@@ -112,8 +113,8 @@ const sendPasswordResetEmail = async (email, resetToken) => {
     },
   });
 
-  const user=await User.findOne({ email });
-  if(!user){
+  const user = await User.findOne({ email });
+  if (!user) {
     res.status(500).json({ message: "Email doesnt Account" });
   }
 
@@ -147,5 +148,20 @@ exports.resetPassword = async (req, res) => {
   } catch (error) {
     console.error("Reset password error:", error);
     res.status(500).json({ message: "Password reset failed" });
+  }
+};
+exports.loginViaGoogle = async (req, res) => {
+  try {
+    const { googleToken } = req.body;
+
+    let response = await axios.post(
+      `https://oauth2.googleapis.com/token?code=${googleToken}&client_id=${process.env.GOOGLE_CLIENT_ID}&client_secret=${process.env.GOOGLE_CLIENT_SECRET}&grant_type=authorization_code&redirect_uri=${process.env.GOOGLE_REDIRECT_URL}`
+    );
+    response = response.data;
+    console.log("response::", response);
+    res.json({ response });
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({ message: "Login failed" });
   }
 };
