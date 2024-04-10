@@ -133,9 +133,8 @@ exports.resetPassword = async (req, res) => {
 
     // Verify the reset token
     if (resetTokens[email] === token) {
-      // Token is valid, update the password
       const hashedPassword = await bcrypt.hash(password, 10);
-      await User.updateOne({ email }, { password: hashedPassword });
+      await User.updateOne({ email } , { password: hashedPassword });
 
       // Remove the reset token
       delete resetTokens[email];
