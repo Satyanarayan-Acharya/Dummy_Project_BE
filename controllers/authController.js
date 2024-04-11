@@ -148,20 +148,3 @@ exports.resetPassword = async (req, res) => {
     res.status(500).json({ message: "Password reset failed" });
   }
 };
-
-// exports.loginViaGoogle = async (req, res) => {
-//   try {
-//     const { access_token } = req.body; // Assuming the access token is sent in the request body
-//     console.log("access_token", access_token);
-//     const response = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
-//       headers: {
-//         'Authorization': `Bearer ${access_token}`
-//       }
-//     });
-//     console.log("response::", response.data);
-//     res.json({ user: response.data });
-//   } catch (error) {
-//     console.error("Login error:", error);
-//     res.status(500).json({ message: "Login failed" });
-//   }
-// };
