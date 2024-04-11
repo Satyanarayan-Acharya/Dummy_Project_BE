@@ -131,7 +131,6 @@ exports.resetPassword = async (req, res) => {
   try {
     const { email, token, password } = req.body;
 
-    // Verify the reset token
     if (resetTokens[email] === token) {
       const hashedPassword = await bcrypt.hash(password, 10);
       await User.updateOne({ email } , { password: hashedPassword });
@@ -149,18 +148,20 @@ exports.resetPassword = async (req, res) => {
     res.status(500).json({ message: "Password reset failed" });
   }
 };
-exports.loginViaGoogle = async (req, res) => {
-  try {
-    const { googleToken } = req.body;
 
-    let response = await axios.post(
-      `https://oauth2.googleapis.com/token?code=${googleToken}&client_id=${process.env.GOOGLE_CLIENT_ID}&client_secret=${process.env.GOOGLE_CLIENT_SECRET}&grant_type=authorization_code&redirect_uri=${process.env.GOOGLE_REDIRECT_URL}`
-    );
-    response = response.data;
-    console.log("response::", response);
-    res.json({ response });
-  } catch (error) {
-    console.error("Login error:", error);
-    res.status(500).json({ message: "Login failed" });
-  }
-};
+// exports.loginViaGoogle = async (req, res) => {
+//   try {
+//     const { access_token } = req.body; // Assuming the access token is sent in the request body
+//     console.log("access_token", access_token);
+//     const response = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
+//       headers: {
+//         'Authorization': `Bearer ${access_token}`
+//       }
+//     });
+//     console.log("response::", response.data);
+//     res.json({ user: response.data });
+//   } catch (error) {
+//     console.error("Login error:", error);
+//     res.status(500).json({ message: "Login failed" });
+//   }
+// };
