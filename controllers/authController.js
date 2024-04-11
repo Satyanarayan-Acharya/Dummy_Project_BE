@@ -134,10 +134,8 @@ exports.resetPassword = async (req, res) => {
     if (resetTokens[email] === token) {
       const hashedPassword = await bcrypt.hash(password, 10);
       await User.updateOne({ email } , { password: hashedPassword });
-
-      console.log(resetTokens[email],'token');
-
       // Remove the reset token
+      console.log("resetToken",resetTokens[email]);
       delete resetTokens[email];
 
       res.json({ message: "Password reset successful" });
